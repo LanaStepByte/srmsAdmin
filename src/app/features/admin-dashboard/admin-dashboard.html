@@ -1,0 +1,277 @@
+<div class="flex h-screen w-full bg-[#1C1A1A] text-gray-200">
+  <!-- Sidebar -->
+  <aside class="hidden md:flex md:flex-col w-64 shrink-0 bg-[#1b3022] border-r border-[#29593D]/60">
+    <div class="flex items-center gap-2 px-6 h-16 border-b border-[#29593D]/60">
+      <div class="h-8 w-8 rounded-md bg-[#29593D] flex items-center justify-center font-bold text-[#a7f3d0]">
+        S
+      </div>
+      <span class="text-lg font-semibold text-white">SRMS Admin</span>
+    </div>
+
+    <nav class="flex-1 overflow-y-auto sidebar-scroll py-4 px-3 space-y-1">
+      @for (item of navItems; track item.route) {
+        <a
+          [href]="item.route"
+          class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium text-gray-300 hover:bg-[#29593D]/50 hover:text-[#a7f3d0] transition-colors"
+        >
+          <span class="h-2 w-2 rounded-full bg-[#65A17E]"></span>
+          {{ item.label }}
+        </a>
+      }
+    </nav>
+
+    <div class="px-6 py-4 border-t border-[#29593D]/60 text-xs text-gray-400">
+      &copy; 2026 SRMS Enterprise
+    </div>
+  </aside>
+
+  <!-- Main column -->
+  <div class="flex flex-1 flex-col min-w-0">
+    <!-- Top navbar -->
+    <header class="flex items-center justify-between h-16 px-6 bg-[#1b3022] border-b border-[#29593D]/60">
+      <h1 class="text-xl font-semibold text-white">Dashboard</h1>
+
+      <div class="flex items-center gap-3">
+        <div class="text-right hidden sm:block">
+          <p class="text-sm font-medium text-white">{{ currentUser().name }}</p>
+          <p class="text-xs text-[#a7f3d0]">{{ currentUser().role }}</p>
+        </div>
+        <div class="h-10 w-10 rounded-full bg-[#29593D] flex items-center justify-center text-[#a7f3d0] font-semibold">
+          {{ currentUser().name.charAt(0) }}
+        </div>
+      </div>
+    </header>
+
+    <!-- Content -->
+    <main class="flex-1 overflow-y-auto p-6 space-y-6">
+      @if (errorMessage(); as message) {
+        <div class="rounded-lg border border-red-800 bg-red-950/40 text-red-300 px-4 py-3 text-sm">
+          {{ message }}
+        </div>
+      }
+
+      <!-- Stats cards -->
+      <section class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+        <div class="rounded-xl bg-[#1b3022] border border-[#29593D]/60 p-5">
+          <p class="text-sm text-gray-400">Total Dishes</p>
+          <p class="mt-2 text-3xl font-bold text-white">{{ stats().totalDishes ?? totalElements() }}</p>
+        </div>
+        <div class="rounded-xl bg-[#1b3022] border border-[#29593D]/60 p-5">
+          <p class="text-sm text-gray-400">Active Orders</p>
+          <p class="mt-2 text-3xl font-bold text-white">{{ stats().activeOrders ?? 5 }}</p>
+        </div>
+        <div class="rounded-xl bg-[#1b3022] border border-[#29593D]/60 p-5">
+          <p class="text-sm text-gray-400">Revenue</p>
+          <p class="mt-2 text-3xl font-bold text-[#a7f3d0]">{{ (stats().revenue ?? 1250) | currency }}</p>
+        </div>
+      </section>
+
+      <!-- Dishes table -->
+      <section class="rounded-xl bg-[#1b3022] border border-[#29593D]/60">
+        <div class="flex items-center justify-between px-5 py-4 border-b border-[#29593D]/60">
+          <h2 class="text-lg font-semibold text-white">Dishes</h2>
+          <button
+            type="button"
+            (click)="onAddDish()"
+            class="rounded-lg bg-[#29593D] hover:bg-[#356b4c] text-[#a7f3d0] text-sm font-medium px-4 py-2 transition-colors"
+          >
+            + Add New Dish
+          </button>
+        </div>
+
+        <div class="table-scroll">
+          <table class="w-full text-sm">
+            <thead>
+              <tr class="text-left text-gray-400 border-b border-[#29593D]/40">
+                <th class="px-5 py-3 font-medium">Name</th>
+                <th class="px-5 py-3 font-medium">Category</th>
+                <th class="px-5 py-3 font-medium">Price</th>
+                <th class="px-5 py-3 font-medium">Status</th>
+                <th class="px-5 py-3 font-medium text-right">Actions</th>
+              </tr>
+            </thead>
+            <tbody>
+              @if (isLoading()) {
+                <tr>
+                  <td colspan="5" class="px-5 py-8 text-center text-gray-400">Loading dishes...</td>
+                </tr>
+              } @else if (dishes().length === 0) {
+                <tr>
+                  <td colspan="5" class="px-5 py-8 text-center text-gray-400">No dishes found.</td>
+                </tr>
+              } @else {
+                @for (dish of dishes(); track dish.id) {
+                  <tr class="border-b border-[#29593D]/20 hover:bg-[#29593D]/20">
+                    <td class="px-5 py-3 text-white font-medium">{{ dish.name }}</td>
+                    <td class="px-5 py-3 text-gray-300">{{ dish.categoryName }}</td>
+                    <td class="px-5 py-3 text-gray-300">{{ dish.price | currency }}</td>
+                    <td class="px-5 py-3">
+                      <span
+                        class="px-2.5 py-1 rounded-full text-xs font-medium"
+                        [ngClass]="statusBadgeClass(dish.isAvailable)"
+                      >
+                        {{ dish.isAvailable ? 'AVAILABLE' : 'OUT OF STOCK' }}
+                      </span>
+                    </td>
+                    <td class="px-5 py-3 text-right space-x-2">
+                      <button
+                        type="button"
+                        (click)="onDeleteDish(dish)"
+                        [disabled]="deletingId() === (dish.id + '')"
+                        class="rounded-md px-3 py-1.5 text-xs font-medium bg-red-900/40 text-red-300 hover:bg-red-900/70 transition-colors disabled:opacity-50"
+                      >
+                        {{ deletingId() === (dish.id + '') ? 'Deleting...' : 'Delete' }}
+                      </button>
+                    </td>
+                  </tr>
+                }
+              }
+            </tbody>
+          </table>
+        </div>
+
+        <div class="flex items-center justify-between px-5 py-3 text-xs text-gray-400">
+          <span>{{ totalElements() }} total dishes</span>
+        </div>
+        <div class="flex items-center justify-between px-5 py-4 border-t border-[#29593D]/40 text-xs text-gray-400">
+          <span>Showing {{ dishes().length }} of {{ totalElements() }} total dishes</span>
+          
+          @if (dishes().length < totalElements()) {
+            <button
+              type="button"
+              (click)="loadMoreDishes()"
+              class="rounded-lg bg-[#29593D] hover:bg-[#356b4c] text-[#a7f3d0] text-sm font-medium px-4 py-2 transition-colors"
+            >
+              See More
+            </button>
+          }
+        </div>
+      </section>
+
+    </main>
+  </div>
+
+  <!-- Add Dish Modal Form -->
+  @if (isModalOpen()) {
+    <div class="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm px-4 overflow-y-auto py-10">
+      <div class="w-full max-w-lg rounded-xl bg-[#1C1A1A] border border-[#29593D] shadow-xl my-auto">
+        <div class="flex items-center justify-between px-6 py-4 border-b border-[#29593D]">
+          <h3 class="text-lg font-semibold text-white">Add New Enterprise Dish</h3>
+          <button
+            type="button"
+            (click)="closeModal()"
+            class="text-gray-400 hover:text-[#65A17E] transition-colors"
+          >
+            ✕
+          </button>
+        </div>
+
+        <form [formGroup]="dishForm" (ngSubmit)="onSubmitDish()" class="px-6 py-5 space-y-4">
+          @if (formSubmitError(); as message) {
+            <div class="rounded-lg border border-red-800 bg-red-950/40 text-red-300 px-3 py-2 text-sm">
+              {{ message }}
+            </div>
+          }
+
+          <!-- Name -->
+          <div>
+            <label class="block text-sm font-medium text-[#65A17E] mb-1">Dish Name</label>
+            <input
+              type="text"
+              formControlName="name"
+              class="w-full rounded-lg bg-[#1b3022] border border-[#29593D] text-white px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-[#65A17E]"
+            />
+            @if (isFieldInvalid('name')) {
+              <p class="mt-1 text-xs text-red-400">Name is required (min 3 characters).</p>
+            }
+          </div>
+
+          <!-- Description -->
+          <div>
+            <label class="block text-sm font-medium text-[#65A17E] mb-1">Description</label>
+            <textarea
+              formControlName="description"
+              rows="2"
+              class="w-full rounded-lg bg-[#1b3022] border border-[#29593D] text-white px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-[#65A17E]"
+            ></textarea>
+            @if (isFieldInvalid('description')) {
+              <p class="mt-1 text-xs text-red-400">Description is required.</p>
+            }
+          </div>
+
+          <div class="grid grid-cols-2 gap-4">
+            <!-- Price -->
+            <div>
+              <label class="block text-sm font-medium text-[#65A17E] mb-1">Price (₾)</label>
+              <input
+                type="number"
+                step="0.01"
+                formControlName="price"
+                class="w-full rounded-lg bg-[#1b3022] border border-[#29593D] text-white px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-[#65A17E]"
+              />
+              @if (isFieldInvalid('price')) {
+                <p class="mt-1 text-xs text-red-400">Price must be greater than 0.</p>
+              }
+            </div>
+
+            <!-- Category ID -->
+            <div>
+              <label class="block text-sm font-medium text-[#65A17E] mb-1">Category ID</label>
+              <input
+                type="number"
+                formControlName="categoryId"
+                class="w-full rounded-lg bg-[#1b3022] border border-[#29593D] text-white px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-[#65A17E]"
+              />
+              @if (isFieldInvalid('categoryId')) {
+                <p class="mt-1 text-xs text-red-400">Valid Category ID is required.</p>
+              }
+            </div>
+          </div>
+
+          <div class="grid grid-cols-2 gap-4">
+            <!-- Image Filename -->
+            <div>
+              <label class="block text-sm font-medium text-[#65A17E] mb-1">Image Filename</label>
+              <input
+                type="text"
+                formControlName="imageFileName"
+                class="w-full rounded-lg bg-[#1b3022] border border-[#29593D] text-white px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-[#65A17E]"
+              />
+            </div>
+
+            <!-- Availability -->
+            <div>
+              <label class="block text-sm font-medium text-[#65A17E] mb-1">Availability</label>
+              <select
+                formControlName="isAvailable"
+                class="w-full rounded-lg bg-[#1b3022] border border-[#29593D] text-white px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-[#65A17E]"
+              >
+                <option [ngValue]="true">Available</option>
+                <option [ngValue]="false">Out of Stock</option>
+              </select>
+            </div>
+          </div>
+
+          <!-- Actions -->
+          <div class="flex items-center justify-end gap-3 pt-2">
+            <button
+              type="button"
+              (click)="closeModal()"
+              [disabled]="isSubmitting()"
+              class="rounded-lg px-4 py-2 text-sm font-medium text-gray-300 hover:text-white transition-colors"
+            >
+              Cancel
+            </button>
+            <button
+              type="submit"
+              [disabled]="dishForm.invalid || isSubmitting()"
+              class="rounded-lg bg-[#29593D] hover:bg-[#356b4c] text-[#a7f3d0] text-sm font-medium px-4 py-2 transition-colors disabled:opacity-50"
+            >
+              {{ isSubmitting() ? 'Saving...' : 'Save Enterprise Dish' }}
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
+  }
+</div>

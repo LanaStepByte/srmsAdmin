@@ -1,0 +1,12 @@
+.sidebar-scroll::-webkit-scrollbar {
+  width: 6px;
+}
+
+.sidebar-scroll::-webkit-scrollbar-thumb {
+  background-color: #29593d;
+  border-radius: 9999px;
+}
+
+.table-scroll {
+  overflow-x: auto;
+}
