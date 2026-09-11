@@ -1,16 +1,14 @@
-import { Component, computed, inject, resource, signal } from '@angular/core';
 import {
-  FieldTree,
+  Component,
+  inject,
+  signal,
+} from '@angular/core';
+import {
   FormField,
-  email,
   form,
-  minLength,
-  pattern,
-  required,
   submit,
-  validate,
-  validateAsync,
 } from '@angular/forms/signals';
+
 import { AuthService } from './auth.service';
 import {
   AuthTokens,
@@ -19,144 +17,204 @@ import {
   StrictRegisterPayload,
 } from './auth.model';
 
-const PHONE_PATTERN = /^\+995-5\d{2}-\d{2}-\d{2}-\d{2}$/;
-
-@Component({
-  selector: 'app-auth',
-  standalone: true,
-  imports: [FormField],
-  templateUrl: './auth.component.html',
-  styleUrl: './auth.component.css',
-})
-export class AuthComponent {
-  private readonly authService = inject(AuthService);
-
-  protected readonly activeView = signal<'register' | 'login'>('register');
-  protected readonly serverMessage = signal<string | null>(null);
-  protected readonly serverError = signal<string | null>(null);
-  protected readonly tokens = signal<AuthTokens | null>(null);
-
-  protected readonly registrationModel = signal<RegistrationFormModel>({
+const INITIAL_REGISTRATION:
+  RegistrationFormModel = {
     email: '',
     displayName: '',
     phone: '',
     password: '',
     confirmPassword: '',
-  });
-  protected readonly loginModel = signal<LoginFormModel>({ email: '', password: '' });
+  };
 
-  protected readonly registrationForm = form(this.registrationModel, (registration) => {
-    required(registration.email);
-    email(registration.email);
-    required(registration.displayName);
-    required(registration.phone);
-    pattern(registration.phone, PHONE_PATTERN, { message: 'Use +995-5xx-xx-xx-xx.' });
-    required(registration.password);
-    minLength(registration.password, 8);
-    required(registration.confirmPassword);
-    validate(registration.confirmPassword, ({ value, valueOf }) =>
-      value() !== valueOf(registration.password)
-        ? { kind: 'passwordMismatch', message: 'Passwords must match.' }
-        : undefined,
+const INITIAL_LOGIN:
+  LoginFormModel = {
+    email: '',
+    password: '',
+  };
+
+@Component({
+  selector: 'app-auth',
+  standalone: true,
+  imports: [
+    FormField,
+  ],
+  templateUrl: './auth.component.html',
+  styleUrl: './auth.component.css',
+})
+export class AuthComponent {
+  private readonly authService =
+    inject(AuthService);
+
+  protected readonly activeView =
+    signal<'register' | 'login'>(
+      'register',
     );
-    validateAsync(registration.phone, {
-      params: ({ value }) => value(),
-      debounce: 350,
-      factory: (phone) =>
-        resource({
-          params: () => phone(),
-          loader: ({ params, abortSignal }) => this.authService.checkPhone(params, abortSignal),
-        }),
-      onSuccess: (result) =>
-        result.isDuplicate
-          ? {
-              kind: 'phoneDuplicate',
-              message: `Phone is already registered. Suggested format: ${result.suggestedFormat}`,
-            }
-          : undefined,
-      onError: () => ({
-        kind: 'phoneServerError',
-        message: 'Phone validation service is unavailable. Try again.',
-      }),
+
+  protected readonly serverMessage =
+    signal<string | null>(null);
+
+  protected readonly serverError =
+    signal<string | null>(null);
+
+  protected readonly tokens =
+    signal<AuthTokens | null>(null);
+
+  // ==========================================
+  // BEFORE LECTURE 46:
+  // Signal Forms already exist.
+  // Validators do NOT exist yet.
+  // Phone async check does NOT exist yet.
+  // ==========================================
+
+  protected readonly registrationModel =
+    signal<RegistrationFormModel>({
+      ...INITIAL_REGISTRATION,
     });
-  });
 
-  protected readonly loginForm = form(this.loginModel, (login) => {
-    required(login.email);
-    email(login.email);
-    required(login.password);
-    minLength(login.password, 8);
-  });
+  protected readonly loginModel =
+    signal<LoginFormModel>({
+      ...INITIAL_LOGIN,
+    });
 
-  protected readonly registerDisabled = computed(
-    () =>
-      this.registrationForm().invalid() ||
-      this.registrationForm().pending() ||
-      this.registrationForm().submitting(),
-  );
+  protected readonly registrationForm =
+    form(this.registrationModel);
 
-  protected setView(view: 'register' | 'login'): void {
+  protected readonly loginForm =
+    form(this.loginModel);
+
+  protected setView(
+    view: 'register' | 'login',
+  ): void {
     this.activeView.set(view);
     this.serverMessage.set(null);
     this.serverError.set(null);
   }
 
-  protected showErrors(field: FieldTree<unknown>): boolean {
-    const state = field();
-    return state.invalid() && (state.touched() || state.dirty());
-  }
+  protected async register(
+    event: Event,
+  ): Promise<void> {
+    event.preventDefault();
 
-  protected async register(): Promise<void> {
     this.serverMessage.set(null);
     this.serverError.set(null);
-    await submit(this.registrationForm, {
-      ignoreValidators: 'none',
-      onInvalid: (field) => field().markAsTouched(),
-      action: async () => {
-        const value = this.registrationModel();
-        const payload: StrictRegisterPayload = Object.freeze({
-          email: value.email,
-          password: value.password,
-          displayName: value.displayName,
-        });
+
+    await submit(
+      this.registrationForm,
+      async (field) => {
+        const value =
+          field().value();
+
+        const payload:
+          StrictRegisterPayload = {
+            email:
+              value.email
+                .trim()
+                .toLowerCase(),
+            password:
+              value.password,
+            displayName:
+              value.displayName.trim(),
+          };
+
         try {
-          await this.authService.register(payload);
-          this.activeView.set('login');
-          this.serverMessage.set('Student account created. You can now sign in.');
+          await this.authService
+            .register(payload);
+
+          this.loginModel.set({
+            email:
+              payload.email,
+            password: '',
+          });
+
+          field().reset({
+            ...INITIAL_REGISTRATION,
+          });
+
+          this.activeView.set(
+            'login',
+          );
+
+          this.serverMessage.set(
+            'Student account created. You can now sign in.',
+          );
         } catch (error) {
-          this.serverError.set(this.messageFor(error, 'Registration failed. Please try again.'));
+          this.serverError.set(
+            this.messageFor(
+              error,
+              'Registration failed. Please try again.',
+            ),
+          );
         }
-        return undefined;
+
+        return;
       },
-    });
+    );
   }
 
-  protected async login(): Promise<void> {
+  protected async login(
+    event: Event,
+  ): Promise<void> {
+    event.preventDefault();
+
     this.serverMessage.set(null);
     this.serverError.set(null);
-    await submit(this.loginForm, {
-      ignoreValidators: 'none',
-      onInvalid: (field) => field().markAsTouched(),
-      action: async () => {
+
+    await submit(
+      this.loginForm,
+      async (field) => {
+        const value =
+          field().value();
+
+        const credentials:
+          LoginFormModel = {
+            email:
+              value.email
+                .trim()
+                .toLowerCase(),
+            password:
+              value.password,
+          };
+
         try {
-          const tokens = await this.authService.login(this.loginModel());
+          const tokens =
+            await this.authService
+              .login(credentials);
+
           this.tokens.set(tokens);
-          localStorage.setItem('accessToken', tokens.accessToken);
-          localStorage.setItem('refreshToken', tokens.refreshToken);
-          this.serverMessage.set('Signed in. Token pair stored for this lesson.');
+
+          localStorage.setItem(
+            'accessToken',
+            tokens.accessToken,
+          );
+
+          localStorage.setItem(
+            'refreshToken',
+            tokens.refreshToken,
+          );
+
+          this.serverMessage.set(
+            'Signed in. Token pair stored for this lesson.',
+          );
         } catch (error) {
-          this.serverError.set(this.messageFor(error, 'Login failed. Check your credentials.'));
+          this.serverError.set(
+            this.messageFor(
+              error,
+              'Login failed. Check your credentials.',
+            ),
+          );
         }
-        return undefined;
+
+        return;
       },
-    });
+    );
   }
 
-  protected errors(field: FieldTree<unknown>): readonly { kind: string; message?: string }[] {
-    return field().errors() as readonly { kind: string; message?: string }[];
-  }
-
-  private messageFor(error: unknown, fallback: string): string {
-    return error instanceof Error ? error.message : fallback;
+  private messageFor(
+    error: unknown,
+    fallback: string,
+  ): string {
+    return error instanceof Error
+      ? error.message
+      : fallback;
   }
 }

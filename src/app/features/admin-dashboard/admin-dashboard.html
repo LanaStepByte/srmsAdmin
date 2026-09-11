@@ -1,9 +1,10 @@
 <div class="flex h-screen w-full bg-[#1C1A1A] text-gray-200">
-  <!-- Sidebar -->
   <aside
     class="hidden md:flex md:flex-col w-64 shrink-0 bg-[#1b3022] border-r border-[#29593D]/60"
   >
-    <div class="flex items-center gap-2 px-6 h-16 border-b border-[#29593D]/60">
+    <div
+      class="flex items-center gap-2 px-6 h-16 border-b border-[#29593D]/60"
+    >
       <div
         class="h-8 w-8 rounded-md bg-[#29593D] flex items-center justify-center font-bold text-[#a7f3d0]"
       >
@@ -15,26 +16,30 @@
       </span>
     </div>
 
-    <nav class="flex-1 overflow-y-auto sidebar-scroll py-4 px-3 space-y-1">
+    <nav
+      class="flex-1 overflow-y-auto sidebar-scroll py-4 px-3 space-y-1"
+    >
       @for (item of navItems; track item.route) {
         <a
           [href]="item.route"
           class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium text-gray-300 hover:bg-[#29593D]/50 hover:text-[#a7f3d0] transition-colors"
         >
-          <span class="h-2 w-2 rounded-full bg-[#65A17E]"></span>
+          <span
+            class="h-2 w-2 rounded-full bg-[#65A17E]"
+          ></span>
           {{ item.label }}
         </a>
       }
     </nav>
 
-    <div class="px-6 py-4 border-t border-[#29593D]/60 text-xs text-gray-400">
+    <div
+      class="px-6 py-4 border-t border-[#29593D]/60 text-xs text-gray-400"
+    >
       &copy; 2026 SRMS Enterprise
     </div>
   </aside>
 
-  <!-- Main column -->
   <div class="flex flex-1 flex-col min-w-0">
-    <!-- Top navbar -->
     <header
       class="flex items-center justify-between h-16 px-6 bg-[#1b3022] border-b border-[#29593D]/60"
     >
@@ -47,7 +52,6 @@
           <p class="text-sm font-medium text-white">
             {{ currentUser().name }}
           </p>
-
           <p class="text-xs text-[#a7f3d0]">
             {{ currentUser().role }}
           </p>
@@ -61,8 +65,9 @@
       </div>
     </header>
 
-    <!-- Content -->
-    <main class="flex-1 overflow-y-auto p-6 space-y-6">
+    <main
+      class="flex-1 overflow-y-auto p-6 space-y-6"
+    >
       @if (errorMessage(); as message) {
         <div
           class="rounded-lg border border-red-800 bg-red-950/40 text-red-300 px-4 py-3 text-sm"
@@ -71,45 +76,67 @@
         </div>
       }
 
-      <!-- Stats cards -->
-      <section class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
-        <div class="rounded-xl bg-[#1b3022] border border-[#29593D]/60 p-5">
+      <section
+        class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4"
+      >
+        <div
+          class="rounded-xl bg-[#1b3022] border border-[#29593D]/60 p-5"
+        >
           <p class="text-sm text-gray-400">
             Total Dishes
           </p>
 
-          <p class="mt-2 text-3xl font-bold text-white">
-            {{ stats().totalDishes ?? totalElements() }}
+          <p
+            class="mt-2 text-3xl font-bold text-white"
+          >
+            {{
+              stats().totalDishes
+                ?? totalElements()
+            }}
           </p>
         </div>
 
-        <div class="rounded-xl bg-[#1b3022] border border-[#29593D]/60 p-5">
+        <div
+          class="rounded-xl bg-[#1b3022] border border-[#29593D]/60 p-5"
+        >
           <p class="text-sm text-gray-400">
             Active Orders
           </p>
 
-          <p class="mt-2 text-3xl font-bold text-white">
+          <p
+            class="mt-2 text-3xl font-bold text-white"
+          >
             {{ stats().activeOrders ?? 5 }}
           </p>
         </div>
 
-        <div class="rounded-xl bg-[#1b3022] border border-[#29593D]/60 p-5">
+        <div
+          class="rounded-xl bg-[#1b3022] border border-[#29593D]/60 p-5"
+        >
           <p class="text-sm text-gray-400">
             Revenue
           </p>
 
-          <p class="mt-2 text-3xl font-bold text-[#a7f3d0]">
-            {{ (stats().revenue ?? 1250) | currency }}
+          <p
+            class="mt-2 text-3xl font-bold text-[#a7f3d0]"
+          >
+            {{
+              (stats().revenue ?? 1250)
+                | currency
+            }}
           </p>
         </div>
       </section>
 
-      <!-- Dishes table -->
-      <section class="rounded-xl bg-[#1b3022] border border-[#29593D]/60">
+      <section
+        class="rounded-xl bg-[#1b3022] border border-[#29593D]/60"
+      >
         <div
           class="flex items-center justify-between px-5 py-4 border-b border-[#29593D]/60"
         >
-          <h2 class="text-lg font-semibold text-white">
+          <h2
+            class="text-lg font-semibold text-white"
+          >
             Dishes
           </h2>
 
@@ -140,7 +167,9 @@
                 <th class="px-5 py-3 font-medium">
                   Status
                 </th>
-                <th class="px-5 py-3 font-medium text-right">
+                <th
+                  class="px-5 py-3 font-medium text-right"
+                >
                   Actions
                 </th>
               </tr>
@@ -156,7 +185,9 @@
                     Loading dishes...
                   </td>
                 </tr>
-              } @else if (dishes().length === 0) {
+              } @else if (
+                dishes().length === 0
+              ) {
                 <tr>
                   <td
                     colspan="5"
@@ -166,26 +197,39 @@
                   </td>
                 </tr>
               } @else {
-                @for (dish of dishes(); track dish.id) {
+                @for (
+                  dish of dishes();
+                  track dish.id
+                ) {
                   <tr
                     class="border-b border-[#29593D]/20 hover:bg-[#29593D]/20"
                   >
-                    <td class="px-5 py-3 text-white font-medium">
+                    <td
+                      class="px-5 py-3 text-white font-medium"
+                    >
                       {{ dish.name }}
                     </td>
 
-                    <td class="px-5 py-3 text-gray-300">
+                    <td
+                      class="px-5 py-3 text-gray-300"
+                    >
                       {{ dish.categoryName }}
                     </td>
 
-                    <td class="px-5 py-3 text-gray-300">
+                    <td
+                      class="px-5 py-3 text-gray-300"
+                    >
                       {{ dish.price | currency }}
                     </td>
 
                     <td class="px-5 py-3">
                       <span
                         class="px-2.5 py-1 rounded-full text-xs font-medium"
-                        [ngClass]="statusBadgeClass(dish.isAvailable)"
+                        [ngClass]="
+                          statusBadgeClass(
+                            dish.isAvailable
+                          )
+                        "
                       >
                         {{
                           dish.isAvailable
@@ -195,15 +239,23 @@
                       </span>
                     </td>
 
-                    <td class="px-5 py-3 text-right">
+                    <td
+                      class="px-5 py-3 text-right"
+                    >
                       <button
                         type="button"
-                        (click)="onDeleteDish(dish)"
-                        [disabled]="deletingId() === (dish.id + '')"
+                        (click)="
+                          onDeleteDish(dish)
+                        "
+                        [disabled]="
+                          deletingId()
+                            === (dish.id + '')
+                        "
                         class="rounded-md px-3 py-1.5 text-xs font-medium bg-red-900/40 text-red-300 hover:bg-red-900/70 transition-colors disabled:opacity-50"
                       >
                         {{
-                          deletingId() === (dish.id + '')
+                          deletingId()
+                            === (dish.id + '')
                             ? 'Deleting...'
                             : 'Delete'
                         }}
@@ -216,12 +268,6 @@
           </table>
         </div>
 
-        <div class="flex items-center justify-between px-5 py-3 text-xs text-gray-400">
-          <span>
-            {{ totalElements() }} total dishes
-          </span>
-        </div>
-
         <div
           class="flex items-center justify-between px-5 py-4 border-t border-[#29593D]/40 text-xs text-gray-400"
         >
@@ -230,7 +276,9 @@
             of {{ totalElements() }} total dishes
           </span>
 
-          @if (dishes().length < totalElements()) {
+          @if (
+            dishes().length < totalElements()
+          ) {
             <button
               type="button"
               (click)="loadMoreDishes()"
@@ -243,279 +291,4 @@
       </section>
     </main>
   </div>
-
-  <!-- ======================================= -->
-  <!-- [ლექცია 45] Add Dish SIGNAL FORM Modal -->
-  <!-- ======================================= -->
-
-  @if (isModalOpen()) {
-    <div
-      class="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm px-4 overflow-y-auto py-10"
-    >
-      <div
-        class="w-full max-w-lg rounded-xl bg-[#1C1A1A] border border-[#29593D] shadow-xl my-auto"
-      >
-        <div
-          class="flex items-center justify-between px-6 py-4 border-b border-[#29593D]"
-        >
-          <div>
-            <h3 class="text-lg font-semibold text-white">
-              Add New Enterprise Dish
-            </h3>
-
-            <p class="mt-1 text-xs text-gray-500">
-              Angular Signal Forms
-            </p>
-          </div>
-
-          <button
-            type="button"
-            (click)="closeModal()"
-            [disabled]="dishForm().submitting()"
-            class="text-gray-400 hover:text-[#65A17E] transition-colors disabled:opacity-40"
-          >
-            ✕
-          </button>
-        </div>
-
-        <!--
-          Reactive Forms-ის [formGroup] და (ngSubmit)
-          აღარ გვჭირდება.
-
-          Signal Form-ს native submit event-ით ვუშვებთ.
-        -->
-        <form
-          (submit)="onSubmitDish($event)"
-          novalidate
-          class="px-6 py-5 space-y-4"
-        >
-          <!--
-            submit() action-იდან დაბრუნებული server errors
-            root form-ის errors()-ში ხვდება.
-          -->
-          @if (dishForm().errors().length > 0) {
-            <div
-              class="rounded-lg border border-red-800 bg-red-950/40 text-red-300 px-3 py-2 text-sm"
-            >
-              @for (error of dishForm().errors(); track $index) {
-                <p>{{ error.message }}</p>
-              }
-            </div>
-          }
-
-          <!-- Name -->
-          <div>
-            <label
-              class="block text-sm font-medium text-[#65A17E] mb-1"
-            >
-              Dish Name
-            </label>
-
-            <input
-              type="text"
-              [formField]="dishForm.name"
-              [class.border-red-500]="showErrors(dishForm.name)"
-              class="w-full rounded-lg bg-[#1b3022] border border-[#29593D] text-white px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-[#65A17E]"
-            />
-
-            @if (showErrors(dishForm.name)) {
-              @for (
-                error of dishForm.name().errors();
-                track $index
-              ) {
-                <p class="mt-1 text-xs text-red-400">
-                  {{ error.message }}
-                </p>
-              }
-            }
-          </div>
-
-          <!-- Description -->
-          <div>
-            <label
-              class="block text-sm font-medium text-[#65A17E] mb-1"
-            >
-              Description
-            </label>
-
-            <textarea
-              rows="3"
-              [formField]="dishForm.description"
-              [class.border-red-500]="showErrors(dishForm.description)"
-              class="w-full rounded-lg bg-[#1b3022] border border-[#29593D] text-white px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-[#65A17E]"
-            ></textarea>
-
-            @if (showErrors(dishForm.description)) {
-              @for (
-                error of dishForm.description().errors();
-                track $index
-              ) {
-                <p class="mt-1 text-xs text-red-400">
-                  {{ error.message }}
-                </p>
-              }
-            }
-          </div>
-
-          <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
-            <!-- Price -->
-            <div>
-              <label
-                class="block text-sm font-medium text-[#65A17E] mb-1"
-              >
-                Price (₾)
-              </label>
-
-              <input
-                type="number"
-                step="0.01"
-                [formField]="dishForm.price"
-                [class.border-red-500]="showErrors(dishForm.price)"
-                class="w-full rounded-lg bg-[#1b3022] border border-[#29593D] text-white px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-[#65A17E]"
-              />
-
-              @if (showErrors(dishForm.price)) {
-                @for (
-                  error of dishForm.price().errors();
-                  track $index
-                ) {
-                  <p class="mt-1 text-xs text-red-400">
-                    {{ error.message }}
-                  </p>
-                }
-              }
-            </div>
-
-            <!-- Category -->
-            <div>
-              <label
-                class="block text-sm font-medium text-[#65A17E] mb-1"
-              >
-                Category ID
-              </label>
-
-              <input
-                type="number"
-                [formField]="dishForm.categoryId"
-                [class.border-red-500]="showErrors(dishForm.categoryId)"
-                class="w-full rounded-lg bg-[#1b3022] border border-[#29593D] text-white px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-[#65A17E]"
-              />
-
-              @if (showErrors(dishForm.categoryId)) {
-                @for (
-                  error of dishForm.categoryId().errors();
-                  track $index
-                ) {
-                  <p class="mt-1 text-xs text-red-400">
-                    {{ error.message }}
-                  </p>
-                }
-              }
-            </div>
-          </div>
-
-          <!-- Image filename -->
-          <div>
-            <label
-              class="block text-sm font-medium text-[#65A17E] mb-1"
-            >
-              Image Filename
-            </label>
-
-            <input
-              type="text"
-              [formField]="dishForm.imageFileName"
-              [class.border-red-500]="showErrors(dishForm.imageFileName)"
-              class="w-full rounded-lg bg-[#1b3022] border border-[#29593D] text-white px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-[#65A17E]"
-            />
-
-            @if (showErrors(dishForm.imageFileName)) {
-              @for (
-                error of dishForm.imageFileName().errors();
-                track $index
-              ) {
-                <p class="mt-1 text-xs text-red-400">
-                  {{ error.message }}
-                </p>
-              }
-            }
-          </div>
-
-          <!--
-            Boolean field-ისთვის checkbox უფრო სწორი Signal Forms
-            binding-ია, ვიდრე select-ის string values.
-          -->
-          <label
-            class="flex items-center gap-3 rounded-lg border border-[#29593D] bg-[#1b3022] px-3 py-3"
-          >
-            <input
-              type="checkbox"
-              [formField]="dishForm.isAvailable"
-              class="h-4 w-4 accent-[#65A17E]"
-            />
-
-            <span class="text-sm text-gray-200">
-              Available for ordering
-            </span>
-          </label>
-
-          <!-- სასწავლო diagnostics -->
-          <div
-            class="rounded-lg border border-[#29593D]/60 bg-[#1b3022] p-3 text-xs text-gray-400"
-          >
-            <p class="font-semibold text-[#65A17E] mb-2">
-              Signal Form state
-            </p>
-
-            <p>
-              valid:
-              {{ dishForm().valid() }}
-              |
-              dirty:
-              {{ dishForm().dirty() }}
-              |
-              touched:
-              {{ dishForm().touched() }}
-            </p>
-
-            <p class="mt-1">
-              pending:
-              {{ dishForm().pending() }}
-              |
-              submitting:
-              {{ dishForm().submitting() }}
-            </p>
-          </div>
-
-          <!-- Actions -->
-          <div class="flex items-center justify-end gap-3 pt-2">
-            <button
-              type="button"
-              (click)="closeModal()"
-              [disabled]="dishForm().submitting()"
-              class="rounded-lg px-4 py-2 text-sm font-medium text-gray-300 hover:text-white transition-colors disabled:opacity-50"
-            >
-              Cancel
-            </button>
-
-            <button
-              type="submit"
-              [disabled]="
-                dishForm().invalid() ||
-                dishForm().pending() ||
-                dishForm().submitting()
-              "
-              class="rounded-lg bg-[#29593D] hover:bg-[#356b4c] text-[#a7f3d0] text-sm font-medium px-4 py-2 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
-            >
-              @if (dishForm().submitting()) {
-                Validating & Saving...
-              } @else {
-                Save Enterprise Dish
-              }
-            </button>
-          </div>
-        </form>
-      </div>
-    </div>
-  }
 </div>

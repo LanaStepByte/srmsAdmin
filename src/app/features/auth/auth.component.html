@@ -1,119 +1,138 @@
 <main class="auth-shell">
-  <section class="auth-panel" aria-labelledby="auth-title">
+  <section
+    class="auth-panel"
+    aria-labelledby="auth-title"
+  >
     <header class="auth-header">
-      <p class="eyebrow">SRMS / Account Access</p>
-      <h1 id="auth-title">Restaurant portal</h1>
-      <p>New public registrations create Student accounts.</p>
+      <p class="eyebrow">
+        SRMS / Account Access
+      </p>
+
+      <h1 id="auth-title">
+        Restaurant portal
+      </h1>
+
+      <p>
+        New public registrations create
+        Student accounts.
+      </p>
     </header>
 
-    <nav class="view-switcher" aria-label="Authentication view">
+    <nav
+      class="view-switcher"
+      aria-label="Authentication view"
+    >
       <button
         type="button"
-        [class.active]="activeView() === 'register'"
+        [class.active]="
+          activeView() === 'register'
+        "
         (click)="setView('register')"
       >
         Registration
       </button>
-      <button type="button" [class.active]="activeView() === 'login'" (click)="setView('login')">
+
+      <button
+        type="button"
+        [class.active]="
+          activeView() === 'login'
+        "
+        (click)="setView('login')"
+      >
         Login
       </button>
     </nav>
 
     @if (serverMessage(); as message) {
-      <p class="notice success" role="status">{{ message }}</p>
+      <p
+        class="notice success"
+        role="status"
+      >
+        {{ message }}
+      </p>
     }
+
     @if (serverError(); as error) {
-      <p class="notice error" role="alert">{{ error }}</p>
+      <p
+        class="notice error"
+        role="alert"
+      >
+        {{ error }}
+      </p>
     }
 
     @if (activeView() === 'register') {
-      <form class="auth-form" (submit)="register(); $event.preventDefault()" novalidate>
-        <label
-          >Email<input
+      <form
+        class="auth-form"
+        (submit)="register($event)"
+        novalidate
+      >
+        <label>
+          Email
+          <input
             type="email"
             autocomplete="email"
-            [formField]="registrationForm.email"
-            [class.invalid]="showErrors(registrationForm.email)"
-        /></label>
-        @if (showErrors(registrationForm.email)) {
-          <div class="field-errors">
-            @for (error of errors(registrationForm.email); track error.kind) {
-              <small>{{ error.message }}</small>
-            }
-          </div>
-        }
+            [formField]="
+              registrationForm.email
+            "
+          />
+        </label>
 
-        <label
-          >Display name<input
+        <label>
+          Display name
+          <input
             type="text"
             autocomplete="name"
-            [formField]="registrationForm.displayName"
-            [class.invalid]="showErrors(registrationForm.displayName)"
-        /></label>
-        @if (showErrors(registrationForm.displayName)) {
-          <div class="field-errors">
-            @for (error of errors(registrationForm.displayName); track error.kind) {
-              <small>{{ error.message }}</small>
-            }
-          </div>
-        }
+            [formField]="
+              registrationForm.displayName
+            "
+          />
+        </label>
 
-        <label
-          >Georgian mobile number<input
+        <label>
+          Georgian mobile number
+          <input
             type="tel"
             placeholder="+995-5xx-xx-xx-xx"
             autocomplete="tel"
-            [formField]="registrationForm.phone"
-            [class.invalid]="showErrors(registrationForm.phone)"
-        /></label>
-        @if (registrationForm.phone().pending()) {
-          <p class="checking">Checking phone...</p>
-        }
-        @if (showErrors(registrationForm.phone)) {
-          <div class="field-errors">
-            @for (error of errors(registrationForm.phone); track error.kind) {
-              <small>{{ error.message }}</small>
-            }
-          </div>
-        }
-        <p class="diagnostics">
-          touched: {{ registrationForm.phone().touched() }} | dirty:
-          {{ registrationForm.phone().dirty() }} | invalid:
-          {{ registrationForm.phone().invalid() }} | pending:
-          {{ registrationForm.phone().pending() }} | submitting:
-          {{ registrationForm().submitting() }}
-        </p>
+            [formField]="
+              registrationForm.phone
+            "
+          />
+        </label>
 
-        <label
-          >Password<input
+        <label>
+          Password
+          <input
             type="password"
             autocomplete="new-password"
-            [formField]="registrationForm.password"
-            [class.invalid]="showErrors(registrationForm.password)"
-        /></label>
-        @if (showErrors(registrationForm.password)) {
-          <div class="field-errors">
-            @for (error of errors(registrationForm.password); track error.kind) {
-              <small>{{ error.message }}</small>
-            }
-          </div>
-        }
-        <label
-          >Confirm password<input
+            [formField]="
+              registrationForm.password
+            "
+          />
+        </label>
+
+        <label>
+          Confirm password
+          <input
             type="password"
             autocomplete="new-password"
-            [formField]="registrationForm.confirmPassword"
-            [class.invalid]="showErrors(registrationForm.confirmPassword)"
-        /></label>
-        @if (showErrors(registrationForm.confirmPassword)) {
-          <div class="field-errors">
-            @for (error of errors(registrationForm.confirmPassword); track error.kind) {
-              <small>{{ error.message }}</small>
-            }
-          </div>
-        }
-        <button class="primary-action" type="submit" [disabled]="registerDisabled()">
-          @if (registrationForm().submitting()) {
+            [formField]="
+              registrationForm.confirmPassword
+            "
+          />
+        </label>
+
+        <button
+          class="primary-action"
+          type="submit"
+          [disabled]="
+            registrationForm().submitting()
+          "
+        >
+          @if (
+            registrationForm().submitting()
+          ) {
             Creating account...
           } @else {
             Register as Student
@@ -121,41 +140,39 @@
         </button>
       </form>
     } @else {
-      <form class="auth-form" (submit)="login(); $event.preventDefault()" novalidate>
-        <label
-          >Email<input
+      <form
+        class="auth-form"
+        (submit)="login($event)"
+        novalidate
+      >
+        <label>
+          Email
+          <input
             type="email"
             autocomplete="email"
             [formField]="loginForm.email"
-            [class.invalid]="showErrors(loginForm.email)"
-        /></label>
-        @if (showErrors(loginForm.email)) {
-          <div class="field-errors">
-            @for (error of errors(loginForm.email); track error.kind) {
-              <small>{{ error.message }}</small>
-            }
-          </div>
-        }
-        <label
-          >Password<input
+          />
+        </label>
+
+        <label>
+          Password
+          <input
             type="password"
             autocomplete="current-password"
             [formField]="loginForm.password"
-            [class.invalid]="showErrors(loginForm.password)"
-        /></label>
-        @if (showErrors(loginForm.password)) {
-          <div class="field-errors">
-            @for (error of errors(loginForm.password); track error.kind) {
-              <small>{{ error.message }}</small>
-            }
-          </div>
-        }
+          />
+        </label>
+
         <button
           class="primary-action"
           type="submit"
-          [disabled]="loginForm().invalid() || loginForm().pending() || loginForm().submitting()"
+          [disabled]="
+            loginForm().submitting()
+          "
         >
-          @if (loginForm().submitting()) {
+          @if (
+            loginForm().submitting()
+          ) {
             Signing in...
           } @else {
             Login

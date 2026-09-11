@@ -17,11 +17,6 @@ export interface LoginFormModel {
   password: string;
 }
 
-export interface PhoneValidationResult {
-  isDuplicate: boolean;
-  suggestedFormat: string;
-}
-
 export interface AuthTokens {
   accessToken: string;
   refreshToken: string;

@@ -1,14 +1,16 @@
 import { Injectable, inject } from '@angular/core';
-import { HttpClient, HttpHeaders, HttpParams } from '@angular/common/http';
+import {
+  HttpClient,
+  HttpHeaders,
+  HttpParams,
+} from '@angular/common/http';
 import { Observable } from 'rxjs';
 
 import {
   AuthResponse,
   DashboardStats,
   Dish,
-  DishPayloadValidationResult,
   PagedResult,
-  StrictCreateDishPayload,
 } from './admin-dashboard.model';
 
 const API_BASE = '/api/v1/enterprise';
@@ -72,32 +74,7 @@ export class AdminDashboardService {
     );
   }
 
-  // ==========================================
-  // [ლექცია 45]: Signal Form submit-ის
-  // server-side validation და create ეტაპები
-  // ==========================================
-
-  validateDishPayload(
-    payload: StrictCreateDishPayload,
-  ): Observable<DishPayloadValidationResult> {
-    return this.http.post<DishPayloadValidationResult>(
-      `${API_BASE}/dishes/validate-payload`,
-      payload,
-      {
-        headers: this.getAuthHeaders(),
-      },
-    );
-  }
-
-  createDish(
-    payload: StrictCreateDishPayload,
-  ): Observable<Dish> {
-    return this.http.post<Dish>(
-      `${API_BASE}/dishes`,
-      payload,
-      {
-        headers: this.getAuthHeaders(),
-      },
-    );
-  }
+  // Lecture 45 starts here:
+  // validateDishPayload() and createDish()
+  // do NOT exist yet.
 }
