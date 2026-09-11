@@ -27,7 +27,6 @@ export interface DashboardStats {
   revenue?: number;
 }
 
-// სერვერის მიერ მოთხოვნილი ზუსტი სტრუქტურა სვაგერიდან
 export interface CreateDishPayload {
   name: string;
   description: string;
@@ -37,7 +36,7 @@ export interface CreateDishPayload {
   isAvailable: boolean;
 }
 
-// სილაბუსის მოთხოვნა: Strict Typing Utility Types (Readonly & Required)
+// Strict Typing Utility Types (Readonly & Required)
 export type StrictCreateDishPayload = Readonly<Required<CreateDishPayload>>;
 
 export interface AdminUser {

@@ -1,0 +1,152 @@
+<main class="auth-shell">
+  <section class="auth-panel" aria-labelledby="auth-title">
+    <header class="auth-header">
+      <p class="eyebrow">SRMS / Account Access</p>
+      <h1 id="auth-title">Restaurant portal</h1>
+      <p>New public registrations create Student accounts.</p>
+    </header>
+
+    <nav class="view-switcher" aria-label="Authentication view">
+      <button
+        type="button"
+        [class.active]="activeView() === 'register'"
+        (click)="setView('register')"
+      >
+        Registration
+      </button>
+      <button type="button" [class.active]="activeView() === 'login'" (click)="setView('login')">
+        Login
+      </button>
+    </nav>
+
+    @if (serverMessage(); as message) {
+      <p class="notice success" role="status">{{ message }}</p>
+    }
+    @if (serverError(); as error) {
+      <p class="notice error" role="alert">{{ error }}</p>
+    }
+
+    @if (activeView() === 'register') {
+      <form class="auth-form" (submit)="register(); $event.preventDefault()" novalidate>
+        <label
+          >Email<input
+            type="email"
+            autocomplete="email"
+            [formField]="registrationForm.email"
+            [class.invalid]="showErrors(registrationForm.email)"
+        /></label>
+        @if (showErrors(registrationForm.email)) {
+          <div class="field-errors">
+            @for (error of errors(registrationForm.email); track error.kind) {
+              <small>{{ error.message }}</small>
+            }
+          </div>
+        }
+
+        <label
+          >Georgian mobile number<input
+            type="tel"
+            placeholder="+995-5xx-xx-xx-xx"
+            autocomplete="tel"
+            [formField]="registrationForm.phone"
+            [class.invalid]="showErrors(registrationForm.phone)"
+        /></label>
+        @if (registrationForm.phone().pending()) {
+          <p class="checking">Checking phone...</p>
+        }
+        @if (showErrors(registrationForm.phone)) {
+          <div class="field-errors">
+            @for (error of errors(registrationForm.phone); track error.kind) {
+              <small>{{ error.message }}</small>
+            }
+          </div>
+        }
+        <p class="diagnostics">
+          touched: {{ registrationForm.phone().touched() }} | dirty:
+          {{ registrationForm.phone().dirty() }} | invalid:
+          {{ registrationForm.phone().invalid() }} | pending:
+          {{ registrationForm.phone().pending() }} | submitting:
+          {{ registrationForm().submitting() }}
+        </p>
+
+        <label
+          >Password<input
+            type="password"
+            autocomplete="new-password"
+            [formField]="registrationForm.password"
+            [class.invalid]="showErrors(registrationForm.password)"
+        /></label>
+        @if (showErrors(registrationForm.password)) {
+          <div class="field-errors">
+            @for (error of errors(registrationForm.password); track error.kind) {
+              <small>{{ error.message }}</small>
+            }
+          </div>
+        }
+        <label
+          >Confirm password<input
+            type="password"
+            autocomplete="new-password"
+            [formField]="registrationForm.confirmPassword"
+            [class.invalid]="showErrors(registrationForm.confirmPassword)"
+        /></label>
+        @if (showErrors(registrationForm.confirmPassword)) {
+          <div class="field-errors">
+            @for (error of errors(registrationForm.confirmPassword); track error.kind) {
+              <small>{{ error.message }}</small>
+            }
+          </div>
+        }
+        <button class="primary-action" type="submit" [disabled]="registerDisabled()">
+          @if (registrationForm().submitting()) {
+            Creating account...
+          } @else {
+            Register as Student
+          }
+        </button>
+      </form>
+    } @else {
+      <form class="auth-form" (submit)="login(); $event.preventDefault()" novalidate>
+        <label
+          >Email<input
+            type="email"
+            autocomplete="email"
+            [formField]="loginForm.email"
+            [class.invalid]="showErrors(loginForm.email)"
+        /></label>
+        @if (showErrors(loginForm.email)) {
+          <div class="field-errors">
+            @for (error of errors(loginForm.email); track error.kind) {
+              <small>{{ error.message }}</small>
+            }
+          </div>
+        }
+        <label
+          >Password<input
+            type="password"
+            autocomplete="current-password"
+            [formField]="loginForm.password"
+            [class.invalid]="showErrors(loginForm.password)"
+        /></label>
+        @if (showErrors(loginForm.password)) {
+          <div class="field-errors">
+            @for (error of errors(loginForm.password); track error.kind) {
+              <small>{{ error.message }}</small>
+            }
+          </div>
+        }
+        <button
+          class="primary-action"
+          type="submit"
+          [disabled]="loginForm().invalid() || loginForm().pending() || loginForm().submitting()"
+        >
+          @if (loginForm().submitting()) {
+            Signing in...
+          } @else {
+            Login
+          }
+        </button>
+      </form>
+    }
+  </section>
+</main>

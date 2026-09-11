@@ -1,0 +1,145 @@
+:host {
+  display: block;
+  min-height: 100vh;
+  color: #a7f3d0;
+  font-family: Georgia, 'Times New Roman', serif;
+}
+.auth-shell {
+  min-height: 100vh;
+  display: grid;
+  place-items: center;
+  padding: 2rem 1rem;
+  background: linear-gradient(135deg, #1b3022 0%, #1c1a1a 70%);
+}
+.auth-panel {
+  width: min(100%, 34rem);
+  border: 1px solid #65a17e66;
+  background: #1c1a1af2;
+  box-shadow: 0 1.5rem 4rem #0008;
+  padding: 2rem;
+}
+.auth-header {
+  border-left: 3px solid #65a17e;
+  padding-left: 1rem;
+  margin-bottom: 1.5rem;
+}
+.eyebrow {
+  color: #65a17e;
+  font:
+    700 0.72rem/1.2 ui-monospace,
+    monospace;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+h1 {
+  margin: 0.35rem 0;
+  color: #fff;
+  font-size: 2rem;
+}
+.auth-header p:last-child {
+  color: #b8c9bd;
+  margin-bottom: 0;
+}
+.view-switcher {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  border: 1px solid #29593d;
+  margin-bottom: 1.25rem;
+}
+.view-switcher button {
+  border: 0;
+  background: transparent;
+  color: #a7f3d0;
+  cursor: pointer;
+  padding: 0.75rem;
+}
+.view-switcher button.active {
+  color: #1c1a1a;
+  background: #65a17e;
+  font-weight: 700;
+}
+.auth-form {
+  display: grid;
+  gap: 1rem;
+}
+label {
+  display: grid;
+  gap: 0.4rem;
+  color: #d7f5e3;
+  font-weight: 700;
+}
+input {
+  box-sizing: border-box;
+  width: 100%;
+  background: #142218;
+  border: 1px solid #51765d;
+  color: #fff;
+  padding: 0.75rem;
+  font: inherit;
+}
+input:focus {
+  outline: 2px solid #65a17e;
+  outline-offset: 1px;
+}
+input.invalid {
+  border-color: #fa8787;
+}
+.field-errors {
+  display: grid;
+  gap: 0.2rem;
+  margin-top: -0.65rem;
+  color: #ffabab;
+}
+.checking {
+  margin: -0.65rem 0 0;
+  color: #a7f3d0;
+  font-style: italic;
+}
+.diagnostics {
+  margin: -0.65rem 0 0;
+  color: #9eb3a3;
+  font:
+    0.72rem/1.45 ui-monospace,
+    monospace;
+}
+.primary-action {
+  margin-top: 0.5rem;
+  border: 0;
+  background: #29593d;
+  color: #fff;
+  cursor: pointer;
+  padding: 0.85rem 1rem;
+  font:
+    700 1rem Georgia,
+    serif;
+}
+.primary-action:hover:not(:disabled) {
+  background: #65a17e;
+  color: #1c1a1a;
+}
+.primary-action:disabled {
+  cursor: not-allowed;
+  opacity: 0.5;
+}
+.notice {
+  border-left: 3px solid;
+  margin: 0 0 1rem;
+  padding: 0.7rem 0.85rem;
+}
+.notice.success {
+  border-color: #65a17e;
+  background: #29593d66;
+}
+.notice.error {
+  border-color: #fa8787;
+  background: #6b242466;
+  color: #ffd1d1;
+}
+@media (max-width: 34rem) {
+  .auth-panel {
+    padding: 1.25rem;
+  }
+  h1 {
+    font-size: 1.6rem;
+  }
+}

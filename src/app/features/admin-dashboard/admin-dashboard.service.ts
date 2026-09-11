@@ -16,7 +16,6 @@ const AUTH_API = '/api/v1/auth';
 export class AdminDashboardService {
   private readonly http = inject(HttpClient);
 
-  // დამხმარე მეთოდი ჰედერებისთვის localStorage-დან ტოკენის ასაღებად
   private getAuthHeaders(): HttpHeaders {
     const token = localStorage.getItem('accessToken') || '';
     return new HttpHeaders({
@@ -31,7 +30,6 @@ export class AdminDashboardService {
 
   getPagedDishes(page: number, size: number): Observable<PagedResult<Dish>> {
     const params = new HttpParams().set('page', page).set('size', size);
-    // GET მოთხოვნასაც ვუყოლებთ ჰედერებს უსაფრთხოებისთვის
     return this.http.get<PagedResult<Dish>>(`${API_BASE}/dishes/paged`, { 
       headers: this.getAuthHeaders(), 
       params 
@@ -50,15 +48,16 @@ export class AdminDashboardService {
     });
   }
 
+  // ==========================================
+  // [ახალი ლექციისთვის]: კერძის შექმნისა და ვალიდაციის მეთოდები
+  // ==========================================
+
   createDish(payload: StrictCreateDishPayload): Observable<Dish> {
-    // აქ ვუყოლებთ ტოკენიან ჰედერებს POST მოთხოვნას
     return this.http.post<Dish>(`${API_BASE}/dishes`, payload, { 
       headers: this.getAuthHeaders() 
     });
   }
 
-
-  // ვალიდაციისთვის
   validateDishPayload(payload: StrictCreateDishPayload): Observable<{ valid: boolean; processedAt?: string }> {
     return this.http.post<{ valid: boolean; processedAt?: string }>(
       `${API_BASE}/dishes/validate-payload`, 

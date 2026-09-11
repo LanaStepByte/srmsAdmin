@@ -94,11 +94,14 @@ export class AdminDashboardComponent {
   protected readonly errorMessage = signal<string | null>(null);
   protected readonly deletingId = signal<string | null>(null);
 
+  // ==========================================
+  // [ახალი ლექციისთვის]: ფორმისა და მოდალის სიგნალები
+  // ==========================================
   protected readonly isModalOpen = signal(false);
   protected readonly isSubmitting = signal(false);
   protected readonly formSubmitError = signal<string | null>(null);
 
-  // Signal Forms არქიტექტურა nonNullable კონტროლერებით
+  // [ახალი ლექციისთვის]: NonNullableFormBuilder-ით ფორმის სტრუქტურა
   protected readonly dishForm = this.fb.group({
     name: ['', [Validators.required, Validators.minLength(3)]],
     description: ['', [Validators.required, Validators.maxLength(200)]],
@@ -108,6 +111,7 @@ export class AdminDashboardComponent {
     isAvailable: [true, [Validators.required]],
   });
 
+  // [ახალი ლექციისთვის]: დამხმარე მეთოდი ველების ვალიდაციის შესამოწმებლად
   protected isFieldInvalid(fieldName: string): boolean {
     const control = this.dishForm.get(fieldName);
     return !!control && control.invalid && (control.dirty || control.touched);
@@ -117,6 +121,7 @@ export class AdminDashboardComponent {
     this.pageSize.update((currentSize) => currentSize + 10);
   }
 
+  // [ახალი ლექციისთვის]: მოდალის გახსნის და ფორმის გასუფთავების მეთოდი
   protected onAddDish(): void {
     this.dishForm.reset({
       name: '',
@@ -130,11 +135,15 @@ export class AdminDashboardComponent {
     this.isModalOpen.set(true);
   }
 
+  // [ახალი ლექციისთვის]: მოდალის დახურვის მეთოდი
   protected closeModal(): void {
     if (this.isSubmitting()) return;
     this.isModalOpen.set(false);
   }
 
+  // ==========================================
+  // [ახალი ლექციისთვის]: onSubmitDish მთავარი მეთოდი
+  // ==========================================
   protected onSubmitDish(): void {
     if (this.dishForm.invalid) {
       this.dishForm.markAllAsTouched();
@@ -154,16 +163,9 @@ export class AdminDashboardComponent {
       isAvailable: Boolean(rawData.isAvailable),
     };
 
-    // ==========================================
-    // [ვალიდაციის დამატება]: validate-payload ენდფოინთის გამოყენება
-    // ==========================================
-    // სანამ კერძი სერვერზე რეალურად შეიქმნებოდეს, ჯერ ვამოწმებთ 
-    // მისი სტრუქტურისა და მონაცემების ვალიდურობას dedicated ენდფოინთით.
     this.dashboardService.validateDishPayload(payload).subscribe({
       next: (validationResult) => {
         if (validationResult.valid) {
-          // თუ სერვერმა დაადასტურა, რომ Payload სტრუქტურულად სრულად ვალიდურია,
-          // მხოლოდ ამის შემდეგ ვგზავნით რეალური შექმნის (create) მოთხოვნას.
           this.dashboardService.createDish(payload).subscribe({
             next: () => {
               this.isSubmitting.set(false);
@@ -177,7 +179,6 @@ export class AdminDashboardComponent {
             },
           });
         } else {
-          // თუ სერვერმა უარყო პეილოდი
           this.isSubmitting.set(false);
           this.formSubmitError.set('სერვერული სტრუქტურული ვალიდაცია ვერ გაიარა.');
         }
