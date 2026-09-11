@@ -1,12 +1,14 @@
 import { Injectable, inject } from '@angular/core';
 import { HttpClient, HttpHeaders, HttpParams } from '@angular/common/http';
 import { Observable } from 'rxjs';
+
 import {
-  StrictCreateDishPayload,
-  Dish,
-  PagedResult,
-  DashboardStats,
   AuthResponse,
+  DashboardStats,
+  Dish,
+  DishPayloadValidationResult,
+  PagedResult,
+  StrictCreateDishPayload,
 } from './admin-dashboard.model';
 
 const API_BASE = '/api/v1/enterprise';
@@ -18,51 +20,84 @@ export class AdminDashboardService {
 
   private getAuthHeaders(): HttpHeaders {
     const token = localStorage.getItem('accessToken') || '';
+
     return new HttpHeaders({
       'Content-Type': 'application/json',
-      'Authorization': `Bearer ${token}`
+      Authorization: `Bearer ${token}`,
     });
   }
 
-  login(credentials: { email: string; password: string }): Observable<AuthResponse> {
-    return this.http.post<AuthResponse>(`${AUTH_API}/login`, credentials);
+  login(credentials: {
+    email: string;
+    password: string;
+  }): Observable<AuthResponse> {
+    return this.http.post<AuthResponse>(
+      `${AUTH_API}/login`,
+      credentials,
+    );
   }
 
-  getPagedDishes(page: number, size: number): Observable<PagedResult<Dish>> {
-    const params = new HttpParams().set('page', page).set('size', size);
-    return this.http.get<PagedResult<Dish>>(`${API_BASE}/dishes/paged`, { 
-      headers: this.getAuthHeaders(), 
-      params 
-    });
+  getPagedDishes(
+    page: number,
+    size: number,
+  ): Observable<PagedResult<Dish>> {
+    const params = new HttpParams()
+      .set('page', page)
+      .set('size', size);
+
+    return this.http.get<PagedResult<Dish>>(
+      `${API_BASE}/dishes/paged`,
+      {
+        headers: this.getAuthHeaders(),
+        params,
+      },
+    );
   }
 
   getDashboardStats(): Observable<DashboardStats> {
-    return this.http.get<DashboardStats>(`${API_BASE}/dashboard/stats`, { 
-      headers: this.getAuthHeaders() 
-    });
+    return this.http.get<DashboardStats>(
+      `${API_BASE}/dashboard/stats`,
+      {
+        headers: this.getAuthHeaders(),
+      },
+    );
   }
 
   deleteDish(id: string): Observable<void> {
-    return this.http.delete<void>(`${API_BASE}/dishes/${id}`, { 
-      headers: this.getAuthHeaders() 
-    });
+    return this.http.delete<void>(
+      `${API_BASE}/dishes/${id}`,
+      {
+        headers: this.getAuthHeaders(),
+      },
+    );
   }
 
   // ==========================================
-  // [ახალი ლექციისთვის]: კერძის შექმნისა და ვალიდაციის მეთოდები
+  // [ლექცია 45]: Signal Form submit-ის
+  // server-side validation და create ეტაპები
   // ==========================================
 
-  createDish(payload: StrictCreateDishPayload): Observable<Dish> {
-    return this.http.post<Dish>(`${API_BASE}/dishes`, payload, { 
-      headers: this.getAuthHeaders() 
-    });
+  validateDishPayload(
+    payload: StrictCreateDishPayload,
+  ): Observable<DishPayloadValidationResult> {
+    return this.http.post<DishPayloadValidationResult>(
+      `${API_BASE}/dishes/validate-payload`,
+      payload,
+      {
+        headers: this.getAuthHeaders(),
+      },
+    );
   }
 
-  validateDishPayload(payload: StrictCreateDishPayload): Observable<{ valid: boolean; processedAt?: string }> {
-    return this.http.post<{ valid: boolean; processedAt?: string }>(
-      `${API_BASE}/dishes/validate-payload`, 
-      payload, 
-      { headers: this.getAuthHeaders() }
+  createDish(
+    payload: StrictCreateDishPayload,
+  ): Observable<Dish> {
+    return this.http.post<Dish>(
+      `${API_BASE}/dishes`,
+      payload,
+      {
+        headers: this.getAuthHeaders(),
+      },
     );
   }
 }
