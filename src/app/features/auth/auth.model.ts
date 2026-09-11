@@ -1,13 +1,12 @@
-export interface RegisterDraft {
-  email?: string;
-  phone?: string;
-  password?: string;
+export interface StrictRegisterPayload {
+  email: string;
+  password: string;
+  displayName: string;
 }
-
-export type StrictRegisterPayload = Readonly<Required<RegisterDraft>>;
 
 export interface RegistrationFormModel {
   email: string;
+  displayName: string;
   phone: string;
   password: string;
   confirmPassword: string;

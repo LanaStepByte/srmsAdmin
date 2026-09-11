@@ -38,6 +38,7 @@ export class AuthComponent {
 
   protected readonly registrationModel = signal<RegistrationFormModel>({
     email: '',
+    displayName: '',
     phone: '',
     password: '',
     confirmPassword: '',
@@ -47,6 +48,7 @@ export class AuthComponent {
   protected readonly registrationForm = form(this.registrationModel, (registration) => {
     required(registration.email);
     email(registration.email);
+    required(registration.displayName);
     required(registration.phone);
     pattern(registration.phone, PHONE_PATTERN, { message: 'Use +995-5xx-xx-xx-xx.' });
     required(registration.password);
@@ -114,8 +116,8 @@ export class AuthComponent {
         const value = this.registrationModel();
         const payload: StrictRegisterPayload = Object.freeze({
           email: value.email,
-          phone: value.phone,
           password: value.password,
+          displayName: value.displayName,
         });
         try {
           await this.authService.register(payload);

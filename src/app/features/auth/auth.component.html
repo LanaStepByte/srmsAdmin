@@ -44,6 +44,21 @@
         }
 
         <label
+          >Display name<input
+            type="text"
+            autocomplete="name"
+            [formField]="registrationForm.displayName"
+            [class.invalid]="showErrors(registrationForm.displayName)"
+        /></label>
+        @if (showErrors(registrationForm.displayName)) {
+          <div class="field-errors">
+            @for (error of errors(registrationForm.displayName); track error.kind) {
+              <small>{{ error.message }}</small>
+            }
+          </div>
+        }
+
+        <label
           >Georgian mobile number<input
             type="tel"
             placeholder="+995-5xx-xx-xx-xx"
